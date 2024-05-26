@@ -3,8 +3,9 @@ import { plant_features } from "../lib/const/plant-features";
 import { generateId } from "../lib/utils";
 import { AdapterAccount } from "next-auth/adapters";
 import { table } from "console";
+import { preffered_standing } from "../lib/const/preffered-standing";
 
-export const prefferedStanding = pgEnum("standing", ["Słoneczne", "Półcień", "Cień"]);
+export const prefferedStanding = pgEnum("standing", preffered_standing);
 export const plantFeatures = pgEnum("plant_features", [Object.keys(plant_features)[0], ...Object.keys(plant_features)]);
 
 type IntRange = {
@@ -76,7 +77,6 @@ export const PlantTable = pgTable("plant", {
     description: text("description").notNull(),
     hints: text("hints"),
     flowering_months: json("flowering_months").$type<IntRange>().default({ from: 4, to: 10 }),
-    earliness: smallint("earliness").default(2),
     height: json("height").$type<IntRange>().default({ from: 25, to: 40 }),
     water_needs: smallint("water_needs").notNull().default(1),
     performance: smallint("performance").default(2),
