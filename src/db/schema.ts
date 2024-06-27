@@ -1,12 +1,12 @@
 import { integer, json, pgEnum, pgTable, primaryKey, smallint, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
-import { plant_features } from "../lib/const/plant-features";
+
 import { generateId } from "../lib/utils";
 import { AdapterAccount } from "next-auth/adapters";
-import { table } from "console";
 import { preffered_standing } from "../lib/const/preffered-standing";
+import { plant_features_keys } from "../lib/const/const";
 
 export const prefferedStanding = pgEnum("standing", preffered_standing);
-export const plantFeatures = pgEnum("plant_features", [Object.keys(plant_features)[0], ...Object.keys(plant_features)]);
+export const plantFeatures = pgEnum("plant_features", plant_features_keys);
 
 type IntRange = {
     from: number;
@@ -70,6 +70,30 @@ export const verificationTokens = pgTable(
  * APP TABLES
  */
 
+export const CategoryTable = pgTable("category", {
+    id: varchar("id", { length: 12 }).primaryKey().$defaultFn(generateId).notNull(),
+    name: text("name").notNull(),
+    description: text("description"),
+    icon_url: text("icon_url")
+});
+
+export const PlantInCategoryTable = pgTable(
+    "plantInCategory",
+    {
+        plant_id: varchar("plant_id", { length: 12 })
+            .references(() => PlantTable.id)
+            .notNull(),
+        category_id: varchar("category_id", { length: 12 })
+            .references(() => CategoryTable.id)
+            .notNull()
+    },
+    table => {
+        return {
+            pk: primaryKey({ name: "plant_in_category_id", columns: [table.plant_id, table.category_id] })
+        };
+    }
+);
+
 export const PlantTable = pgTable("plant", {
     id: varchar("id", { length: 12 }).primaryKey().$defaultFn(generateId).notNull(),
     name: text("name").notNull(),
@@ -89,13 +113,13 @@ export const PlantVariantsTable = pgTable(
         plant_id: varchar("plant_id", { length: 12 })
             .references(() => PlantTable.id)
             .notNull(),
-        variant_id: varchar("plant_id", { length: 12 })
+        variant_id: varchar("variant_id", { length: 12 })
             .references(() => PlantTable.id)
             .notNull()
     },
     table => {
         return {
-            pk: primaryKey({ columns: [table.plant_id, table.variant_id] })
+            pk: primaryKey({ name: "plant_variant_id", columns: [table.plant_id, table.variant_id] })
         };
     }
 );
@@ -124,14 +148,14 @@ export const PlantWithFeatureTable = pgTable(
     }
 );
 
-export const VegetableTable = pgTable("vegetable", {
-    id: varchar("id", { length: 12 }).primaryKey().$defaultFn(generateId),
-    name: text("name").notNull(),
-    alt_names: text("alt_names"),
-    description: text("description").notNull(),
-    harvest_months: json("harvest_months").$type<IntRange>().default({ from: 6, to: 8 }),
-    water_needs: smallint("water_needs").notNull().default(1),
-    earliness: smallint("earliness").default(2)
-});
+// export const VegetableTable = pgTable("vegetable", {
+//     id: varchar("id", { length: 12 }).primaryKey().$defaultFn(generateId),
+//     name: text("name").notNull(),
+//     alt_names: text("alt_names"),
+//     description: text("description").notNull(),
+//     harvest_months: json("harvest_months").$type<IntRange>().default({ from: 6, to: 8 }),
+//     water_needs: smallint("water_needs").notNull().default(1),
+//     earliness: smallint("earliness").default(2)
+// });
 
 export type Plant = typeof PlantTable.$inferSelect;

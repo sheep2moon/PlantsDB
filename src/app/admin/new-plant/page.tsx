@@ -15,6 +15,8 @@ import { polish_month_names } from "../../../lib/const/const";
 import { prefferedStanding } from "../../../db/schema";
 import { preffered_standing } from "../../../lib/const/preffered-standing";
 import { Checkbox } from "../../../components/ui/checkbox";
+import ImageInput from "../../../components/ui/image-input";
+import Image from "next/image";
 
 type FormData = z.infer<typeof newPlantSchema>;
 
@@ -31,9 +33,11 @@ export default function NewPlantPage() {
         });
     });
     useEffect(() => {
-        console.log(form.formState.errors);
-        console.log(form.getValues());
-    }, [form.formState.errors]);
+        console.log(form.watch("images"));
+
+        // console.log(form.formState.errors);
+        // console.log(form.getValues());
+    }, [form.watch("images")]);
     return (
         <div className="py-8 px-2 max-w-screen-md mx-auto">
             <Form {...form}>
@@ -78,7 +82,26 @@ export default function NewPlantPage() {
                             </FormItem>
                         )}
                     />
-
+                    <FormField
+                        control={form.control}
+                        name="images"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Zdjęcia</FormLabel>
+                                <FormControl className="">
+                                    <div className="grid grid-cols-3 gap-2">
+                                        <ImageInput onFileAdd={file => form.setValue("images", [...field.value, file])} />
+                                        {/* <ImageInput onFileAdd={file => form.setValue("images", [file, ...form.watch("images")])} /> */}
+                                        {field.value.map((file, index) => (
+                                            <div key={`${file.name}-${index}`} className="relative rounded-sm overflow-hidden bg-primary-foreground">
+                                                <Image fill className="object-contain" alt="" src={URL.createObjectURL(file)} />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </FormControl>
+                            </FormItem>
+                        )}
+                    />
                     <FormField
                         control={form.control}
                         name="performance"

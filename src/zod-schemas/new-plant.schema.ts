@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { customFile } from "./file.schema";
+import { fileSchema } from "./file.schema";
 import { prefferedStanding } from "../db/schema";
 
 export const newPlantSchema = z.object({
     name: z.string().min(4, "Nazwa powinna być dłuższa"),
     description: z.string().min(20, "Opis powinien być dłuższy niż 20 znaków."),
     alt_names: z.array(z.string()).optional(),
-    images: z.array(customFile).min(1, "Zdjęcie jest wymagane"),
+    images: z.array(fileSchema).min(1, "Zdjęcie jest wymagane"),
     preffered_standing: z.array(z.enum(prefferedStanding.enumValues)),
     water_needs: z.number().min(1).max(5),
     performance: z.number().min(1).max(5),
