@@ -32,12 +32,7 @@ export default function NewPlantPage() {
             console.log("submit");
         });
     });
-    useEffect(() => {
-        console.log(form.watch("images"));
 
-        // console.log(form.formState.errors);
-        // console.log(form.getValues());
-    }, [form.watch("images")]);
     return (
         <div className="py-8 px-2 max-w-screen-md mx-auto">
             <Form {...form}>
@@ -75,6 +70,19 @@ export default function NewPlantPage() {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Opis</FormLabel>
+                                <FormControl>
+                                    <Textarea {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="hints"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Wskazówki</FormLabel>
                                 <FormControl>
                                     <Textarea {...field} />
                                 </FormControl>
@@ -199,7 +207,7 @@ export default function NewPlantPage() {
                         )}
                     />
 
-                    <Button className="mt-8" disabled={pending}>
+                    <Button type="submit" className="mt-8" disabled={pending}>
                         Dodaj rośline
                     </Button>
                 </form>
