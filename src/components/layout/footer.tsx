@@ -4,7 +4,7 @@ import { LinkButton } from "../ui/link-button";
 const Footer = () => {
     return (
         <footer className="mt-8">
-            <LinkButton href="/">Strona główna</LinkButton>
+            <p>footer</p>
         </footer>
     );
 };
